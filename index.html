@@ -1,0 +1,2992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DocuVerse Architecture - Complete Technical Overview</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%236366f1'/><circle cx='50' cy='50' r='25' fill='%23818cf8'/><circle cx='50' cy='50' r='10' fill='%23c7d2fe'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%236366f1'/><circle cx='50' cy='50' r='25' fill='%23818cf8'/><circle cx='50' cy='50' r='10' fill='%23c7d2fe'/></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Mermaid for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+    <!-- D3.js for interactive visualizations -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Highlight.js for code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+</head>
+
+<body class="dark-theme">
+    <!-- Navigation -->
+    <nav class="main-nav" id="mainNav">
+        <div class="nav-brand">
+            <span class="logo-icon">&#9673;</span>
+            <span class="logo-text">DocuVerse</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#overview" class="nav-link active">Overview</a></li>
+            <li><a href="#paradigm" class="nav-link">Paradigm Shift</a></li>
+            <li><a href="#architecture" class="nav-link">Architecture</a></li>
+            <li><a href="#crawler" class="nav-link">Crawler</a></li>
+            <li><a href="#embeddings" class="nav-link">Embeddings</a></li>
+            <li><a href="#vectordb" class="nav-link">Vector DB</a></li>
+            <li><a href="#algorithms" class="nav-link">Algorithms</a></li>
+            <li><a href="#rag" class="nav-link">RAG</a></li>
+            <li><a href="#code" class="nav-link">Code</a></li>
+            <li><a href="#resources" class="nav-link">Resources</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero" id="overview">
+        <div class="hero-content">
+            <div class="hero-badge">Serverless Semantic Engine</div>
+            <h1 class="hero-title">
+                <span class="gradient-text">DocuVerse</span> Architecture
+            </h1>
+            <p class="hero-subtitle">
+                Architecting Mass Indexing Pipelines with Modal and Vector Databases
+            </p>
+            <p class="hero-description">
+                A comprehensive technical analysis of building a serverless semantic search engine
+                that indexes <strong>5 million documents</strong> using distributed crawling,
+                GPU-accelerated embeddings, and vector databases.
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-value">5M+</span>
+                    <span class="stat-label">Documents</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">&lt;$50</span>
+                    <span class="stat-label">Monthly Cost</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">92%</span>
+                    <span class="stat-label">Cost Savings</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">&lt;200ms</span>
+                    <span class="stat-label">Search Latency</span>
+                </div>
+            </div>
+            <div class="hero-actions">
+                <a href="#architecture" class="btn btn-primary">Explore Architecture</a>
+                <a href="#code" class="btn btn-secondary">View Code</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-cards">
+                <div class="float-card card-modal">
+                    <div class="card-icon">&#9881;</div>
+                    <span>Modal</span>
+                </div>
+                <div class="float-card card-pinecone">
+                    <div class="card-icon">&#9672;</div>
+                    <span>Pinecone</span>
+                </div>
+                <div class="float-card card-langchain">
+                    <div class="card-icon">&#9741;</div>
+                    <span>LangChain</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Executive Summary -->
+    <section class="section" id="executive-summary">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">01</span>
+                <h2 class="section-title">Executive Summary</h2>
+            </div>
+            <div class="summary-grid">
+                <a href="#paradigm" class="summary-card highlight">
+                    <div class="summary-icon">&#128269;</div>
+                    <h3>The Challenge</h3>
+                    <p>Traditional infrastructure struggles with the "bursty" nature of mass indexing.
+                    A crawler might sit idle for days, then require thousands of concurrent threads.</p>
+                </a>
+                <a href="#architecture" class="summary-card">
+                    <div class="summary-icon">&#9889;</div>
+                    <h3>The Solution</h3>
+                    <p>Serverless architecture with Modal for compute orchestration and Vector Databases
+                    for high-dimensional storage enables scale-to-zero efficiency.</p>
+                </a>
+                <a href="#costs" class="summary-card">
+                    <div class="summary-icon">&#128200;</div>
+                    <h3>The Result</h3>
+                    <p>92% cost reduction compared to traditional Kubernetes deployments while maintaining
+                    sub-200ms search latency and 15-minute index freshness.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Paradigm Shift Section -->
+    <section class="section section-alt" id="paradigm">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">02</span>
+                <h2 class="section-title">The Paradigm Shift in Search</h2>
+            </div>
+
+            <div class="paradigm-comparison">
+                <div class="comparison-item old">
+                    <div class="comparison-header">
+                        <span class="comparison-badge badge-old">Traditional</span>
+                        <h3>Inverted Index</h3>
+                    </div>
+                    <ul class="comparison-list">
+                        <li><span class="icon-x">&#10006;</span> Lexical gap: "car" &#8800; "automobile"</li>
+                        <li><span class="icon-check">&#10004;</span> CPU/IO bound operations</li>
+                        <li><span class="icon-check">&#10004;</span> Well-understood B-Tree storage</li>
+                        <li><span class="icon-x">&#10006;</span> Requires manual synonymization</li>
+                    </ul>
+                    <div class="tech-examples">
+                        <span class="tech-tag">Elasticsearch</span>
+                        <span class="tech-tag">Apache Lucene</span>
+                    </div>
+                </div>
+
+                <div class="comparison-arrow">
+                    <div class="arrow-line"></div>
+                    <div class="arrow-text">Evolution</div>
+                </div>
+
+                <div class="comparison-item new">
+                    <div class="comparison-header">
+                        <span class="comparison-badge badge-new">Modern</span>
+                        <h3>Vector Embeddings</h3>
+                    </div>
+                    <ul class="comparison-list">
+                        <li><span class="icon-check">&#10004;</span> Semantic similarity: "car" &#8776; "automobile"</li>
+                        <li><span class="icon-check">&#10004;</span> GPU-accelerated compute</li>
+                        <li><span class="icon-check">&#10004;</span> ANN algorithms (HNSW)</li>
+                        <li><span class="icon-check">&#10004;</span> Cross-lingual understanding</li>
+                    </ul>
+                    <div class="tech-examples">
+                        <span class="tech-tag highlight">Pinecone</span>
+                        <span class="tech-tag highlight">Qdrant</span>
+                        <span class="tech-tag highlight">BERT/GPT</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resource Shift Visualization -->
+            <div class="resource-shift">
+                <h3 class="subsection-title">Resource Requirements Shift</h3>
+                <div class="shift-cards">
+                    <div class="shift-card">
+                        <div class="shift-icon cpu">CPU</div>
+                        <div class="shift-arrow">&#8594;</div>
+                        <div class="shift-icon gpu">GPU</div>
+                        <p>Matrix multiplications require massive GPU parallelization</p>
+                    </div>
+                    <div class="shift-card">
+                        <div class="shift-icon io">I/O</div>
+                        <div class="shift-arrow">&#8594;</div>
+                        <div class="shift-icon compute">Compute</div>
+                        <p>Embedding models are the new bottleneck</p>
+                    </div>
+                    <div class="shift-card">
+                        <div class="shift-icon btree">B-Tree</div>
+                        <div class="shift-arrow">&#8594;</div>
+                        <div class="shift-icon hnsw">HNSW</div>
+                        <p>Approximate Nearest Neighbor algorithms for vectors</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Infrastructure Dilemma -->
+            <div class="dilemma-section">
+                <h3 class="subsection-title">The Infrastructure Dilemma</h3>
+                <div class="dilemma-visual">
+                    <div class="burstiness-chart">
+                        <div class="chart-title">Resource Usage Over Time</div>
+                        <div class="chart-bars">
+                            <div class="bar-group" data-value="15">
+                                <div class="bar" style="height: 15%"></div>
+                                <span class="bar-tooltip">15% usage</span>
+                                <span class="bar-label">Mon</span>
+                            </div>
+                            <div class="bar-group" data-value="10">
+                                <div class="bar" style="height: 10%"></div>
+                                <span class="bar-tooltip">10% usage</span>
+                                <span class="bar-label">Tue</span>
+                            </div>
+                            <div class="bar-group" data-value="8">
+                                <div class="bar" style="height: 8%"></div>
+                                <span class="bar-tooltip">8% usage</span>
+                                <span class="bar-label">Wed</span>
+                            </div>
+                            <div class="bar-group peak" data-value="95">
+                                <div class="bar" style="height: 95%"></div>
+                                <span class="bar-tooltip">95% usage (Peak)</span>
+                                <span class="bar-label">Thu</span>
+                                <span class="peak-label">PEAK</span>
+                            </div>
+                            <div class="bar-group" data-value="12">
+                                <div class="bar" style="height: 12%"></div>
+                                <span class="bar-tooltip">12% usage</span>
+                                <span class="bar-label">Fri</span>
+                            </div>
+                            <div class="bar-group" data-value="5">
+                                <div class="bar" style="height: 5%"></div>
+                                <span class="bar-tooltip">5% usage</span>
+                                <span class="bar-label">Sat</span>
+                            </div>
+                            <div class="bar-group" data-value="3">
+                                <div class="bar" style="height: 3%"></div>
+                                <span class="bar-tooltip">3% usage</span>
+                                <span class="bar-label">Sun</span>
+                            </div>
+                        </div>
+                        <div class="chart-lines">
+                            <div class="provision-line peak-line">
+                                <span>Provisioned for Peak (95% wasted)</span>
+                            </div>
+                            <div class="provision-line avg-line">
+                                <span>Provisioned for Average (latency spikes)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dilemma-explanation">
+                        <div class="dilemma-option">
+                            <h4><span class="option-icon bad">&#9888;</span> Provisioned Capacity</h4>
+                            <p>Provision for peak = pay for idle GPUs 95% of the time</p>
+                            <p>Provision for average = massive latency spikes during peak</p>
+                        </div>
+                        <div class="dilemma-option">
+                            <h4><span class="option-icon bad">&#9888;</span> Traditional Serverless</h4>
+                            <p>No GPU support, 15-minute timeouts, cold starts too slow for ML models</p>
+                        </div>
+                        <div class="dilemma-option highlight">
+                            <h4><span class="option-icon good">&#10004;</span> Modal Solution</h4>
+                            <p>Per-second billing, GPU ephemerality, millisecond container launches</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DocuVerse Use Case -->
+    <section class="section" id="usecase">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">03</span>
+                <h2 class="section-title">The DocuVerse Use Case</h2>
+            </div>
+
+            <div class="usecase-intro">
+                <div class="usecase-mission">
+                    <h3>Mission</h3>
+                    <p><strong>DocuVerse</strong> is a "Universal Documentation Search Engine" for developers.
+                    A single search bar that retrieves the most relevant technical answers using RAG,
+                    regardless of where the information lives.</p>
+                </div>
+                <div class="usecase-sources">
+                    <h3>Data Sources</h3>
+                    <div class="source-tags">
+                        <span class="source-tag official">
+                            <span class="source-icon">&#128220;</span>
+                            Official: Python Docs, MDN, AWS
+                        </span>
+                        <span class="source-tag community">
+                            <span class="source-icon">&#128101;</span>
+                            Community: Stack Overflow, GitHub
+                        </span>
+                        <span class="source-tag decentralized">
+                            <span class="source-icon">&#127760;</span>
+                            Decentralized: IPFS, Arweave
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dataset Specifications Table -->
+            <div class="specs-table-container">
+                <h3 class="subsection-title">Dataset Specifications</h3>
+                <table class="specs-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                            <th>Implications</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Total Documents</strong></td>
+                            <td class="value-highlight">5,000,000</td>
+                            <td>Requires efficient bulk indexing strategies</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Average Doc Size</strong></td>
+                            <td>4 KB (~800 tokens)</td>
+                            <td>Fits within standard embedding context windows</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Update Velocity</strong></td>
+                            <td>~200,000 docs/day</td>
+                            <td>Incremental indexing must be robust</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vector Dimensions</strong></td>
+                            <td>1,536</td>
+                            <td>OpenAI Ada-002 compatible, high-fidelity</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Index Size</strong></td>
+                            <td>~30 GB</td>
+                            <td>Vectors + Metadata storage requirements</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Target Latency</strong></td>
+                            <td class="value-highlight">&lt;200ms search, &lt;15min freshness</td>
+                            <td>Tight constraints on ingestion pipeline</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Matrix Link Concept -->
+            <div class="matrix-link-section">
+                <div class="matrix-content">
+                    <h3 class="subsection-title">The "Matrix Link" - PageRank for Code</h3>
+                    <p>Beyond simple text search, DocuVerse constructs a <strong>graph of documentation relationships</strong>.
+                    How many pages link to the React <code>useEffect</code> hook? This "Matrix Link" boosts
+                    authoritative pages during vector retrieval.</p>
+                    <div class="matrix-formula">
+                        <code>Final_Score = (Vector_Similarity * 0.8) + (PageRank_Score * 0.2)</code>
+                    </div>
+                </div>
+                <div class="matrix-visual" id="matrixLinkGraph">
+                    <!-- D3 graph will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Architecture Diagram -->
+    <section class="section section-alt" id="architecture">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">04</span>
+                <h2 class="section-title">Complete Architecture Overview</h2>
+            </div>
+
+            <div class="architecture-intro">
+                <p>The DocuVerse engine is built on four pillars: <strong>Ingestion</strong>, <strong>Processing</strong>,
+                <strong>Memory</strong>, and <strong>Interaction</strong>. Each component is designed for
+                serverless execution with automatic scaling.</p>
+            </div>
+
+            <!-- Interactive Architecture Flowchart -->
+            <div class="diagram-container">
+                <div class="diagram-controls">
+                    <button class="diagram-btn active" data-view="full">Full Pipeline</button>
+                    <button class="diagram-btn" data-view="ingestion">Ingestion</button>
+                    <button class="diagram-btn" data-view="processing">Processing</button>
+                    <button class="diagram-btn" data-view="storage">Storage</button>
+                    <button class="diagram-btn" data-view="interaction">Interaction</button>
+                </div>
+                <div class="architecture-graph" id="architectureGraph"></div>
+                <div class="arch-legend">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #3b82f6;"></span>
+                        <span>Ingestion Layer</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #8b5cf6;"></span>
+                        <span>Processing Layer</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #10b981;"></span>
+                        <span>Storage Layer</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #f59e0b;"></span>
+                        <span>Interaction Layer</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture Component Cards -->
+            <div class="arch-cards">
+                <div class="arch-card" data-layer="ingestion">
+                    <div class="arch-card-header">
+                        <span class="arch-icon">&#128230;</span>
+                        <h4>Ingestion Layer</h4>
+                    </div>
+                    <p>CPU-bound web crawling with politeness sharding and deduplication</p>
+                    <div class="arch-tech">
+                        <span class="tech-chip">modal.Queue</span>
+                        <span class="tech-chip">modal.Dict</span>
+                        <span class="tech-chip">BeautifulSoup</span>
+                    </div>
+                    <div class="arch-metrics">
+                        <span>1,200 pages/sec</span>
+                        <span>300 containers</span>
+                    </div>
+                </div>
+
+                <div class="arch-card" data-layer="processing">
+                    <div class="arch-card-header">
+                        <span class="arch-icon">&#9889;</span>
+                        <h4>Processing Layer</h4>
+                    </div>
+                    <p>GPU-accelerated embedding generation with intelligent batching</p>
+                    <div class="arch-tech">
+                        <span class="tech-chip">e5-large</span>
+                        <span class="tech-chip">A10G GPU</span>
+                        <span class="tech-chip">8-bit Quantization</span>
+                    </div>
+                    <div class="arch-metrics">
+                        <span>4,500 docs/sec</span>
+                        <span>50 GPUs</span>
+                    </div>
+                </div>
+
+                <div class="arch-card" data-layer="storage">
+                    <div class="arch-card-header">
+                        <span class="arch-icon">&#128190;</span>
+                        <h4>Storage Layer</h4>
+                    </div>
+                    <p>Serverless vector storage with bulk import and hybrid search</p>
+                    <div class="arch-tech">
+                        <span class="tech-chip">Pinecone</span>
+                        <span class="tech-chip">S3</span>
+                        <span class="tech-chip">HNSW</span>
+                    </div>
+                    <div class="arch-metrics">
+                        <span>10,000 vectors/sec</span>
+                        <span>30GB index</span>
+                    </div>
+                </div>
+
+                <div class="arch-card" data-layer="interaction">
+                    <div class="arch-card-header">
+                        <span class="arch-icon">&#129309;</span>
+                        <h4>Interaction Layer</h4>
+                    </div>
+                    <p>RAG pipeline with reranking and authority-boosted retrieval</p>
+                    <div class="arch-tech">
+                        <span class="tech-chip">LangChain</span>
+                        <span class="tech-chip">Cross-Encoder</span>
+                        <span class="tech-chip">GPT-4</span>
+                    </div>
+                    <div class="arch-metrics">
+                        <span>&lt;200ms latency</span>
+                        <span>Hybrid search</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Crawler Deep Dive -->
+    <section class="section" id="crawler">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">05</span>
+                <h2 class="section-title">Distributed Crawler Architecture</h2>
+            </div>
+
+            <div class="crawler-intro">
+                <p>Building a crawler that handles 5 million pages without getting blocked, crashing,
+                or entering infinite loops requires a sophisticated distributed architecture based on
+                the <strong>Producer-Consumer Pattern</strong>.</p>
+            </div>
+
+            <!-- Producer-Consumer Pattern -->
+            <div class="pattern-section">
+                <h3 class="subsection-title">Producer-Consumer Pattern with modal.Queue</h3>
+                <div class="pattern-explanation">
+                    <div class="pattern-problem">
+                        <h4>&#9888; The Problem</h4>
+                        <p>In a monolithic script, crawling is recursive: <code>visit(url) -&gt; find_links() -&gt; visit(links)</code></p>
+                        <p>In serverless: deep recursion = stack overflows and timeout errors</p>
+                    </div>
+                    <div class="pattern-solution">
+                        <h4>&#10004; The Solution</h4>
+                        <p>Flatten recursion into a <strong>Queue-Based Architecture</strong> where work discovery
+                        is decoupled from work execution.</p>
+                    </div>
+                </div>
+
+                <div class="crawler-graph-container">
+                    <div class="crawler-graph" id="crawlerGraph"></div>
+                    <div class="crawler-legend">
+                        <div class="crawler-legend-item">
+                            <span class="legend-dot" style="background: #f59e0b;"></span>
+                            <span>Producer</span>
+                        </div>
+                        <div class="crawler-legend-item">
+                            <span class="legend-dot" style="background: #3b82f6;"></span>
+                            <span>Queue</span>
+                        </div>
+                        <div class="crawler-legend-item">
+                            <span class="legend-dot" style="background: #10b981;"></span>
+                            <span>Workers</span>
+                        </div>
+                        <div class="crawler-legend-item">
+                            <span class="legend-dot" style="background: #8b5cf6;"></span>
+                            <span>State Store</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Why Not modal.map -->
+            <div class="callout-box warning">
+                <div class="callout-icon">&#128161;</div>
+                <div class="callout-content">
+                    <h4>Why Not modal.map?</h4>
+                    <p>While <code>modal.map</code> allows parallel execution over a list, it is <strong>static</strong> -
+                    it expects inputs to be known beforehand. A crawler is <strong>dynamic</strong>: parsing Page A reveals
+                    Pages B and C. The Queue pattern is essential because it allows the workload to expand during runtime.</p>
+                </div>
+            </div>
+
+            <!-- Politeness Sharding -->
+            <div class="pattern-section">
+                <h3 class="subsection-title">Politeness Sharding Strategy</h3>
+                <p style="padding-bottom: 1rem;">A naive crawler scaling to 500 containers resembles a DDoS attack. We implement domain-based sharding:</p>
+
+                <div class="sharding-visual">
+                    <div class="shard-card">
+                        <div class="shard-header">Worker Type A</div>
+                        <div class="shard-domain">*.github.io</div>
+                        <div class="shard-limit">Limit: 5 concurrent</div>
+                    </div>
+                    <div class="shard-card">
+                        <div class="shard-header">Worker Type B</div>
+                        <div class="shard-domain">*.readthedocs.io</div>
+                        <div class="shard-limit">Limit: 10 concurrent</div>
+                    </div>
+                    <div class="shard-card">
+                        <div class="shard-header">Worker Type C</div>
+                        <div class="shard-domain">General Web</div>
+                        <div class="shard-limit">Limit: 100 concurrent</div>
+                    </div>
+                </div>
+                <p class="shard-note">This ensures aggregate throughput is high while per-domain impact remains respectful of <code>robots.txt</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Embeddings Deep Dive -->
+    <section class="section section-alt" id="embeddings">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">06</span>
+                <h2 class="section-title">GPU Orchestration &amp; Embeddings</h2>
+            </div>
+
+            <div class="embeddings-intro">
+                <p>The processing layer is the most expensive phase - where Modal's value proposition is strongest.
+                This is where we shift from network-bound (crawling) to <strong>compute-bound</strong> (embedding).</p>
+            </div>
+
+            <!-- Cold Start Advantage -->
+            <div class="coldstart-section">
+                <h3 class="subsection-title">The Container Loading Advantage</h3>
+                <div class="coldstart-comparison">
+                    <div class="coldstart-item slow">
+                        <div class="coldstart-icon">&#128034;</div>
+                        <h4>Traditional (K8s)</h4>
+                        <div class="coldstart-time">~2 minutes</div>
+                        <p>Pull 5GB image, load PyTorch model weights into GPU memory</p>
+                    </div>
+                    <div class="coldstart-arrow">VS</div>
+                    <div class="coldstart-item fast">
+                        <div class="coldstart-icon">&#9889;</div>
+                        <h4>Modal Snapshot</h4>
+                        <div class="coldstart-time">&lt;2 seconds</div>
+                        <p>Container snapshot mounted over network, lazy loading on demand</p>
+                    </div>
+                </div>
+                <div class="coldstart-implication">
+                    <strong>Implication:</strong> No need for "warm pools" of GPU servers. If the crawler finds
+                    a new pocket of documentation, Modal instantly spins up 50 GPU containers and shuts them down
+                    the second the queue is empty.
+                </div>
+            </div>
+
+            <!-- Batching Strategy -->
+            <div class="batching-section">
+                <h3 class="subsection-title">Batching Strategy for Throughput</h3>
+                <p>GPUs are <strong>throughput devices</strong>, not latency devices. Sending one document at a time
+                is inefficient due to CPU-to-GPU data transfer overhead.</p>
+
+                <div class="batching-graph-container">
+                    <div class="batching-graph" id="batchingGraph"></div>
+                    <div class="batching-legend">
+                        <div class="batching-legend-item">
+                            <span class="legend-dot" style="background: #3b82f6;"></span>
+                            <span>Input (Crawlers)</span>
+                        </div>
+                        <div class="batching-legend-item">
+                            <span class="legend-dot" style="background: #f59e0b;"></span>
+                            <span>Batcher (CPU)</span>
+                        </div>
+                        <div class="batching-legend-item">
+                            <span class="legend-dot" style="background: #8b5cf6;"></span>
+                            <span>GPU Embedder</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model Selection -->
+            <div class="model-section">
+                <h3 class="subsection-title">Model Selection &amp; Quantization</h3>
+                <div class="model-comparison">
+                    <div class="model-option">
+                        <h4>API-Based (OpenAI)</h4>
+                        <div class="model-pros">
+                            <span class="icon-check">&#10004;</span> Simple to implement
+                        </div>
+                        <div class="model-cons">
+                            <span class="icon-x">&#10006;</span> $0.10/1M tokens adds up
+                        </div>
+                    </div>
+                    <div class="model-option selected">
+                        <div class="model-badge">Selected</div>
+                        <h4>Self-Hosted (e5-large)</h4>
+                        <div class="model-pros">
+                            <span class="icon-check">&#10004;</span> State-of-the-art for technical text
+                            <span class="icon-check">&#10004;</span> Full control over GPU costs
+                        </div>
+                        <div class="model-detail">
+                            <strong>Quantization:</strong> Scalar (32-bit to 8-bit) = 4x size reduction with minimal recall loss
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vector Database Section -->
+    <section class="section" id="vectordb">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">07</span>
+                <h2 class="section-title">Vector Database Layer</h2>
+            </div>
+
+            <div class="vectordb-intro">
+                <p>The vectors produced by GPU workers need a home. We analyze two leading contenders and their
+                integration strategies for the serverless pipeline.</p>
+            </div>
+
+            <!-- Database Comparison -->
+            <div class="db-comparison">
+                <div class="db-card pinecone">
+                    <div class="db-header">
+                        <div class="db-logo">&#128205;</div>
+                        <h3>Pinecone Serverless</h3>
+                        <span class="db-badge primary">Primary Choice</span>
+                    </div>
+                    <div class="db-features">
+                        <div class="feature">
+                            <span class="feature-icon">&#10004;</span>
+                            <div>
+                                <strong>Separation of Concerns</strong>
+                                <p>Vectors stored in blob storage, loaded into index only when needed</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">&#10004;</span>
+                            <div>
+                                <strong>Bulk Import via S3</strong>
+                                <p>Write Parquet files to S3, Pinecone ingests asynchronously</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">&#10004;</span>
+                            <div>
+                                <strong>Hybrid Search</strong>
+                                <p>Dense vectors + BM25 sparse vectors for keyword matching</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="db-usecase">
+                        <strong>Use for:</strong> Production index with zero-maintenance elasticity
+                    </div>
+                </div>
+
+                <div class="db-card qdrant">
+                    <div class="db-header">
+                        <div class="db-logo">&#9672;</div>
+                        <h3>Qdrant</h3>
+                        <span class="db-badge secondary">Dev/Testing</span>
+                    </div>
+                    <div class="db-features">
+                        <div class="feature">
+                            <span class="feature-icon">&#10004;</span>
+                            <div>
+                                <strong>Open Source</strong>
+                                <p>Run as managed cloud or self-hosted in Modal Sandbox</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">&#10004;</span>
+                            <div>
+                                <strong>HNSW Optimization</strong>
+                                <p>Disable graph rebalancing during bulk upload, force optimization after</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <span class="feature-icon">&#10004;</span>
+                            <div>
+                                <strong>LangChain Integration</strong>
+                                <p>Deep integration with QdrantVectorStore for metadata filtering</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="db-usecase">
+                        <strong>Use for:</strong> Local development without cloud costs
+                    </div>
+                </div>
+            </div>
+
+            <!-- HNSW Visualization -->
+            <div class="hnsw-section">
+                <h3 class="subsection-title">HNSW Algorithm Visualization</h3>
+                <p>Hierarchical Navigable Small World graphs enable fast approximate nearest neighbor search:</p>
+                <div class="hnsw-visual" id="hnswVisualization">
+                    <!-- D3 visualization will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vector Search Algorithms Section -->
+    <section class="section section-alt" id="algorithms">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">08</span>
+                <h2 class="section-title">Vector Search Algorithms</h2>
+            </div>
+
+            <div class="algo-intro">
+                <p>Understanding the algorithms behind vector search is crucial for optimizing performance.
+                The two primary approaches - <strong>IVF (Inverted File)</strong> and <strong>HNSW (Hierarchical Navigable Small World)</strong> -
+                offer different trade-offs between speed, accuracy, and memory usage.</p>
+            </div>
+
+            <!-- Algorithm Comparison -->
+            <div class="algo-comparison">
+                <div class="algo-card ivf">
+                    <div class="algo-header">
+                        <div class="algo-icon">&#128194;</div>
+                        <h3>IVF (Inverted File Index)</h3>
+                    </div>
+                    <div class="algo-content">
+                        <p>IVF partitions the vector space into clusters using k-means. During search,
+                        only the nearest clusters are searched, dramatically reducing comparisons.</p>
+
+                        <div class="algo-steps">
+                            <div class="algo-step">
+                                <span class="step-num">1</span>
+                                <div class="step-content">
+                                    <strong>Training Phase</strong>
+                                    <p>Run k-means on sample vectors to create centroids</p>
+                                </div>
+                            </div>
+                            <div class="algo-step">
+                                <span class="step-num">2</span>
+                                <div class="step-content">
+                                    <strong>Indexing Phase</strong>
+                                    <p>Assign each vector to its nearest centroid's bucket</p>
+                                </div>
+                            </div>
+                            <div class="algo-step">
+                                <span class="step-num">3</span>
+                                <div class="step-content">
+                                    <strong>Search Phase</strong>
+                                    <p>Find nearest centroids, then search only those buckets</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="algo-params">
+                            <h4>Key Parameters</h4>
+                            <ul>
+                                <li><code>nlist</code> - Number of clusters (typically sqrt(n))</li>
+                                <li><code>nprobe</code> - Clusters to search at query time</li>
+                            </ul>
+                        </div>
+
+                        <div class="algo-tradeoffs">
+                            <div class="tradeoff pro">
+                                <span class="icon">&#10004;</span>
+                                <span>Lower memory footprint</span>
+                            </div>
+                            <div class="tradeoff pro">
+                                <span class="icon">&#10004;</span>
+                                <span>Faster bulk imports</span>
+                            </div>
+                            <div class="tradeoff con">
+                                <span class="icon">&#10006;</span>
+                                <span>Lower recall at equal speed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="algo-card hnsw-card">
+                    <div class="algo-header">
+                        <div class="algo-icon">&#127760;</div>
+                        <h3>HNSW (Hierarchical NSW)</h3>
+                        <span class="algo-badge">Recommended</span>
+                    </div>
+                    <div class="algo-content">
+                        <p>HNSW builds a multi-layer graph where each layer has exponentially fewer nodes.
+                        Search starts at the top sparse layer and greedily descends to find nearest neighbors.</p>
+
+                        <div class="algo-steps">
+                            <div class="algo-step">
+                                <span class="step-num">1</span>
+                                <div class="step-content">
+                                    <strong>Entry Point</strong>
+                                    <p>Start at a random node in the topmost layer</p>
+                                </div>
+                            </div>
+                            <div class="algo-step">
+                                <span class="step-num">2</span>
+                                <div class="step-content">
+                                    <strong>Greedy Search</strong>
+                                    <p>Move to the neighbor closest to query vector</p>
+                                </div>
+                            </div>
+                            <div class="algo-step">
+                                <span class="step-num">3</span>
+                                <div class="step-content">
+                                    <strong>Layer Descent</strong>
+                                    <p>When stuck at local minimum, descend to next layer</p>
+                                </div>
+                            </div>
+                            <div class="algo-step">
+                                <span class="step-num">4</span>
+                                <div class="step-content">
+                                    <strong>Base Layer Search</strong>
+                                    <p>Exhaustive search in bottom layer for final candidates</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="algo-params">
+                            <h4>Key Parameters</h4>
+                            <ul>
+                                <li><code>M</code> - Max connections per node (16-64)</li>
+                                <li><code>efConstruction</code> - Build-time search width</li>
+                                <li><code>efSearch</code> - Query-time search width</li>
+                            </ul>
+                        </div>
+
+                        <div class="algo-tradeoffs">
+                            <div class="tradeoff pro">
+                                <span class="icon">&#10004;</span>
+                                <span>Best recall/speed ratio</span>
+                            </div>
+                            <div class="tradeoff pro">
+                                <span class="icon">&#10004;</span>
+                                <span>No training required</span>
+                            </div>
+                            <div class="tradeoff con">
+                                <span class="icon">&#10006;</span>
+                                <span>Higher memory usage</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complexity Comparison Table -->
+            <div class="complexity-table-container">
+                <h3 class="subsection-title">Complexity Comparison</h3>
+                <table class="complexity-table">
+                    <thead>
+                        <tr>
+                            <th>Operation</th>
+                            <th>IVF</th>
+                            <th>HNSW</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Build Time</td>
+                            <td>O(n * k * iterations)</td>
+                            <td>O(n * log(n) * M)</td>
+                        </tr>
+                        <tr>
+                            <td>Search Time</td>
+                            <td>O(nprobe * n/nlist)</td>
+                            <td>O(log(n) * efSearch)</td>
+                        </tr>
+                        <tr>
+                            <td>Memory</td>
+                            <td>O(n * d + k * d)</td>
+                            <td>O(n * (d + M * layers))</td>
+                        </tr>
+                        <tr>
+                            <td>Insert (Online)</td>
+                            <td>O(k)</td>
+                            <td>O(log(n) * M)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Interactive Algorithm Flow -->
+            <div class="algo-flow-section">
+                <h3 class="subsection-title">Algorithm Operations Visualized</h3>
+                <p class="algo-flow-intro">Click on each operation to see the iterative flow and Python implementation.</p>
+
+                <div class="algo-flow-tabs">
+                    <button class="algo-flow-tab active" data-op="build">Build Time</button>
+                    <button class="algo-flow-tab" data-op="search">Search Time</button>
+                    <button class="algo-flow-tab" data-op="memory">Memory</button>
+                    <button class="algo-flow-tab" data-op="insert">Insert (Online)</button>
+                </div>
+
+                <div class="algo-flow-panels">
+                    <!-- Build Time Panel -->
+                    <div class="algo-flow-panel active" id="flow-build">
+                        <div class="flow-comparison">
+                            <div class="flow-card ivf-flow">
+                                <h4>IVF Build: O(n × k × iterations)</h4>
+                                <div class="flow-animation" id="ivf-build-anim">
+                                    <div class="flow-step-viz">
+                                        <div class="flow-vectors">
+                                            <span class="vec">v1</span>
+                                            <span class="vec">v2</span>
+                                            <span class="vec">v3</span>
+                                            <span class="vec">...</span>
+                                            <span class="vec">vn</span>
+                                        </div>
+                                        <div class="flow-arrow">↓ k-means</div>
+                                        <div class="flow-clusters">
+                                            <span class="cluster c1">C1</span>
+                                            <span class="cluster c2">C2</span>
+                                            <span class="cluster c3">C3</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python"># IVF Build - K-means clustering
+import numpy as np
+
+def ivf_build(vectors, k=100, max_iter=20):
+    n, d = vectors.shape
+
+    # Initialize k centroids randomly
+    centroids = vectors[np.random.choice(n, k, replace=False)]
+
+    for iteration in range(max_iter):  # O(iterations)
+        # Assign each vector to nearest centroid
+        assignments = []
+        for i in range(n):  # O(n)
+            distances = []
+            for j in range(k):  # O(k)
+                dist = np.linalg.norm(vectors[i] - centroids[j])
+                distances.append(dist)
+            assignments.append(np.argmin(distances))
+
+        # Update centroids
+        for j in range(k):
+            cluster_vecs = vectors[np.array(assignments) == j]
+            if len(cluster_vecs) > 0:
+                centroids[j] = cluster_vecs.mean(axis=0)
+
+    return centroids, assignments
+# Total: O(n * k * iterations)</code></pre>
+                            </div>
+
+                            <div class="flow-card hnsw-flow">
+                                <h4>HNSW Build: O(n × log(n) × M)</h4>
+                                <div class="flow-animation" id="hnsw-build-anim">
+                                    <div class="flow-step-viz">
+                                        <div class="flow-layers">
+                                            <div class="layer l2">Layer 2 <span class="nodes">○─○</span></div>
+                                            <div class="layer l1">Layer 1 <span class="nodes">○─○─○─○</span></div>
+                                            <div class="layer l0">Layer 0 <span class="nodes">○─○─○─○─○─○─○─○</span></div>
+                                        </div>
+                                        <div class="flow-arrow">↑ Insert each vector</div>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python"># HNSW Build - Hierarchical graph construction
+import random
+import heapq
+
+def hnsw_build(vectors, M=16, ef_construction=200):
+    n = len(vectors)
+    graph = {i: {layer: [] for layer in range(max_layer(i))}
+             for i in range(n)}
+
+    for i in range(n):  # O(n) - insert each vector
+        level = random_level()  # Usually 0, rarely higher
+
+        # Find entry point at top layer
+        entry = find_entry_point()
+
+        for layer in range(level, -1, -1):  # O(log(n)) layers
+            # Find M nearest neighbors at this layer
+            neighbors = search_layer(
+                vectors[i], entry, ef_construction, layer
+            )
+
+            # Connect to M nearest neighbors
+            for neighbor in neighbors[:M]:  # O(M) connections
+                graph[i][layer].append(neighbor)
+                graph[neighbor][layer].append(i)
+
+            entry = neighbors[0]  # Best neighbor for next layer
+
+    return graph
+# Total: O(n * log(n) * M)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search Time Panel -->
+                    <div class="algo-flow-panel" id="flow-search">
+                        <div class="flow-comparison">
+                            <div class="flow-card ivf-flow">
+                                <h4>IVF Search: O(nprobe × n/nlist)</h4>
+                                <div class="flow-animation">
+                                    <div class="flow-step-viz">
+                                        <div class="flow-query">Query: q</div>
+                                        <div class="flow-arrow">↓ Find nearest clusters</div>
+                                        <div class="flow-clusters searched">
+                                            <span class="cluster c1 active">C1 ✓</span>
+                                            <span class="cluster c2 active">C2 ✓</span>
+                                            <span class="cluster c3">C3</span>
+                                        </div>
+                                        <div class="flow-arrow">↓ Scan vectors in clusters</div>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python"># IVF Search - Cluster-based retrieval
+def ivf_search(query, centroids, inverted_lists, nprobe=8, k=10):
+    # Step 1: Find nprobe nearest clusters
+    cluster_distances = []
+    for j, centroid in enumerate(centroids):  # O(nlist)
+        dist = np.linalg.norm(query - centroid)
+        cluster_distances.append((dist, j))
+
+    # Sort and take top nprobe clusters
+    cluster_distances.sort()
+    probe_clusters = [c[1] for c in cluster_distances[:nprobe]]
+
+    # Step 2: Search within selected clusters
+    candidates = []
+    for cluster_id in probe_clusters:  # O(nprobe)
+        vectors_in_cluster = inverted_lists[cluster_id]
+        # Each cluster has ~n/nlist vectors
+        for vec_id, vector in vectors_in_cluster:  # O(n/nlist)
+            dist = np.linalg.norm(query - vector)
+            candidates.append((dist, vec_id))
+
+    # Return top-k results
+    candidates.sort()
+    return candidates[:k]
+# Total: O(nprobe * n/nlist)</code></pre>
+                            </div>
+
+                            <div class="flow-card hnsw-flow">
+                                <h4>HNSW Search: O(log(n) × efSearch)</h4>
+                                <div class="flow-animation">
+                                    <div class="flow-step-viz">
+                                        <div class="flow-query">Query: q</div>
+                                        <div class="flow-arrow">↓ Navigate layers</div>
+                                        <div class="flow-layers searched">
+                                            <div class="layer l2">L2: <span class="path">●→●</span></div>
+                                            <div class="layer l1">L1: <span class="path">●→●→●</span></div>
+                                            <div class="layer l0">L0: <span class="path">●→●→●→●→★</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python"># HNSW Search - Greedy layer-by-layer traversal
+def hnsw_search(query, graph, vectors, ef_search=64, k=10):
+    # Start at top layer with entry point
+    entry_point = 0  # Usually node 0
+    current_best = entry_point
+
+    # Traverse from top layer down
+    for layer in range(max_layer, -1, -1):  # O(log(n)) layers
+        # Greedy search at this layer
+        changed = True
+        while changed:
+            changed = False
+            # Check all neighbors of current best
+            for neighbor in graph[current_best][layer]:  # O(M)
+                dist = np.linalg.norm(query - vectors[neighbor])
+                if dist < np.linalg.norm(query - vectors[current_best]):
+                    current_best = neighbor
+                    changed = True
+
+    # At layer 0: expand search with efSearch candidates
+    candidates = []
+    visited = {current_best}
+    heap = [(np.linalg.norm(query - vectors[current_best]), current_best)]
+
+    while heap and len(candidates) < ef_search:
+        dist, node = heapq.heappop(heap)
+        candidates.append((dist, node))
+
+        for neighbor in graph[node][0]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                heapq.heappush(heap,
+                    (np.linalg.norm(query - vectors[neighbor]), neighbor))
+
+    return sorted(candidates)[:k]
+# Total: O(log(n) * efSearch)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Memory Panel -->
+                    <div class="algo-flow-panel" id="flow-memory">
+                        <div class="flow-comparison">
+                            <div class="flow-card ivf-flow">
+                                <h4>IVF Memory: O(n×d + k×d)</h4>
+                                <div class="flow-animation">
+                                    <div class="flow-step-viz memory-viz">
+                                        <div class="mem-block vectors-mem">
+                                            <span class="mem-label">Vectors</span>
+                                            <span class="mem-size">n × d floats</span>
+                                        </div>
+                                        <div class="mem-block centroids-mem">
+                                            <span class="mem-label">Centroids</span>
+                                            <span class="mem-size">k × d floats</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python"># IVF Memory Calculation
+def ivf_memory_usage(n_vectors, dimension, n_clusters, dtype='float32'):
+    bytes_per_float = 4 if dtype == 'float32' else 2
+
+    # Original vectors: n * d
+    vectors_memory = n_vectors * dimension * bytes_per_float
+
+    # Cluster centroids: k * d
+    centroids_memory = n_clusters * dimension * bytes_per_float
+
+    # Inverted lists (cluster assignments): n * 4 bytes (int32)
+    assignments_memory = n_vectors * 4
+
+    total = vectors_memory + centroids_memory + assignments_memory
+
+    print(f"Vectors:    {vectors_memory / 1e9:.2f} GB")
+    print(f"Centroids:  {centroids_memory / 1e6:.2f} MB")
+    print(f"Total:      {total / 1e9:.2f} GB")
+
+    return total
+
+# Example: 5M vectors, 1024 dims, 4096 clusters
+ivf_memory_usage(5_000_000, 1024, 4096)
+# Vectors:    20.48 GB
+# Centroids:  16.78 MB
+# Total:      20.50 GB</code></pre>
+                            </div>
+
+                            <div class="flow-card hnsw-flow">
+                                <h4>HNSW Memory: O(n×(d + M×layers))</h4>
+                                <div class="flow-animation">
+                                    <div class="flow-step-viz memory-viz">
+                                        <div class="mem-block vectors-mem">
+                                            <span class="mem-label">Vectors</span>
+                                            <span class="mem-size">n × d floats</span>
+                                        </div>
+                                        <div class="mem-block graph-mem">
+                                            <span class="mem-label">Graph Links</span>
+                                            <span class="mem-size">n × M × layers</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python"># HNSW Memory Calculation
+import math
+
+def hnsw_memory_usage(n_vectors, dimension, M=16, ml=0.36):
+    bytes_per_float = 4
+    bytes_per_int = 4
+
+    # Original vectors: n * d
+    vectors_memory = n_vectors * dimension * bytes_per_float
+
+    # Average number of layers per node
+    avg_layers = 1 / (1 - ml)  # ~1.56 for ml=0.36
+
+    # Graph connections: each node has M connections per layer
+    # Layer 0: 2*M connections (bidirectional)
+    # Higher layers: M connections
+    links_per_node = (2 * M) + (avg_layers - 1) * M
+    graph_memory = n_vectors * links_per_node * bytes_per_int
+
+    total = vectors_memory + graph_memory
+
+    print(f"Vectors:    {vectors_memory / 1e9:.2f} GB")
+    print(f"Graph:      {graph_memory / 1e9:.2f} GB")
+    print(f"Total:      {total / 1e9:.2f} GB")
+
+    return total
+
+# Example: 5M vectors, 1024 dims, M=16
+hnsw_memory_usage(5_000_000, 1024, M=16)
+# Vectors:    20.48 GB
+# Graph:      0.94 GB
+# Total:      21.42 GB (slightly more than IVF)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Insert Panel -->
+                    <div class="algo-flow-panel" id="flow-insert">
+                        <div class="flow-comparison">
+                            <div class="flow-card ivf-flow">
+                                <h4>IVF Insert: O(k)</h4>
+                                <div class="flow-animation">
+                                    <div class="flow-step-viz">
+                                        <div class="flow-query">New vector: v</div>
+                                        <div class="flow-arrow">↓ Compare to k centroids</div>
+                                        <div class="flow-clusters">
+                                            <span class="cluster c1">C1</span>
+                                            <span class="cluster c2 active">C2 ←</span>
+                                            <span class="cluster c3">C3</span>
+                                        </div>
+                                        <div class="flow-arrow">↓ Add to inverted list</div>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python"># IVF Online Insert - Fast cluster assignment
+def ivf_insert(vector, centroids, inverted_lists, vector_id):
+    # Find nearest cluster: O(k)
+    min_dist = float('inf')
+    best_cluster = 0
+
+    for j, centroid in enumerate(centroids):  # O(k) comparisons
+        dist = np.linalg.norm(vector - centroid)
+        if dist < min_dist:
+            min_dist = dist
+            best_cluster = j
+
+    # Add to inverted list: O(1)
+    inverted_lists[best_cluster].append((vector_id, vector))
+
+    return best_cluster
+
+# Example: Insert 1000 new vectors
+for i, vec in enumerate(new_vectors):
+    cluster = ivf_insert(vec, centroids, inverted_lists, i)
+    print(f"Vector {i} -> Cluster {cluster}")
+# Each insert: O(k) where k = number of clusters</code></pre>
+                            </div>
+
+                            <div class="flow-card hnsw-flow">
+                                <h4>HNSW Insert: O(log(n) × M)</h4>
+                                <div class="flow-animation">
+                                    <div class="flow-step-viz">
+                                        <div class="flow-query">New vector: v</div>
+                                        <div class="flow-arrow">↓ Navigate to position</div>
+                                        <div class="flow-layers">
+                                            <div class="layer l1">L1: find entry</div>
+                                            <div class="layer l0">L0: connect M neighbors</div>
+                                        </div>
+                                        <div class="flow-arrow">↓ Create M bidirectional links</div>
+                                    </div>
+                                </div>
+                                <pre><code class="language-python"># HNSW Online Insert - Graph extension
+def hnsw_insert(vector, vector_id, graph, vectors, M=16, ef=200):
+    # Determine max layer for new node (exponential decay)
+    ml = 0.36  # Layer multiplier
+    level = int(-math.log(random.random()) * ml)
+
+    # Initialize empty adjacency lists
+    graph[vector_id] = {l: [] for l in range(level + 1)}
+    vectors[vector_id] = vector
+
+    entry_point = get_entry_point()
+
+    # Navigate from top layer down: O(log(n))
+    for layer in range(get_max_layer(), level, -1):
+        entry_point = greedy_search(vector, entry_point, layer)
+
+    # Insert at each layer from level down to 0
+    for layer in range(min(level, get_max_layer()), -1, -1):
+        # Find ef nearest neighbors: O(ef)
+        neighbors = search_layer(vector, entry_point, ef, layer)
+
+        # Select M best neighbors
+        selected = select_neighbors(vector, neighbors, M)
+
+        # Create bidirectional connections: O(M)
+        for neighbor in selected:
+            graph[vector_id][layer].append(neighbor)
+            graph[neighbor][layer].append(vector_id)
+
+            # Prune if neighbor has too many connections
+            if len(graph[neighbor][layer]) > M:
+                graph[neighbor][layer] = prune_connections(
+                    neighbor, graph[neighbor][layer], M
+                )
+
+        entry_point = neighbors[0]
+
+    return level
+# Total: O(log(n) * M) for navigation + connections</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Python Code Examples -->
+            <div class="algo-code-section">
+                <h3 class="subsection-title">Implementation Examples</h3>
+
+                <div class="code-tabs">
+                    <button class="code-tab active" data-file="qdrant-algo">Qdrant (HNSW)</button>
+                    <button class="code-tab" data-file="pinecone-algo">Pinecone</button>
+                    <button class="code-tab" data-file="faiss-algo">FAISS (IVF)</button>
+                </div>
+
+                <div class="code-panels">
+                    <div class="code-panel active" id="code-qdrant-algo">
+                        <div class="code-header">
+                            <span class="code-filename">qdrant_hnsw.py</span>
+                            <span class="code-description">Qdrant with HNSW configuration</span>
+                        </div>
+                        <pre><code class="language-python">from qdrant_client import QdrantClient
+from qdrant_client.models import (
+    VectorParams, Distance, HnswConfigDiff,
+    OptimizersConfigDiff, PointStruct
+)
+
+# Initialize client
+client = QdrantClient(host="localhost", port=6333)
+
+# Create collection with optimized HNSW settings
+client.create_collection(
+    collection_name="docuverse",
+    vectors_config=VectorParams(
+        size=1536,  # OpenAI ada-002 dimensions
+        distance=Distance.COSINE
+    ),
+    hnsw_config=HnswConfigDiff(
+        m=16,                    # Connections per node
+        ef_construct=100,        # Build-time search width
+        full_scan_threshold=10000  # Use HNSW when > 10k vectors
+    ),
+    optimizers_config=OptimizersConfigDiff(
+        indexing_threshold=20000,  # Start indexing after 20k points
+        memmap_threshold=50000     # Use memory mapping for large data
+    )
+)
+
+# Upsert vectors with payload
+points = [
+    PointStruct(
+        id=idx,
+        vector=embedding,
+        payload={
+            "url": doc.url,
+            "title": doc.title,
+            "chunk_id": chunk_id
+        }
+    )
+    for idx, (embedding, doc, chunk_id) in enumerate(data)
+]
+
+client.upsert(
+    collection_name="docuverse",
+    points=points,
+    wait=True
+)
+
+# Search with HNSW parameters
+results = client.search(
+    collection_name="docuverse",
+    query_vector=query_embedding,
+    limit=10,
+    search_params={
+        "hnsw_ef": 128,  # Query-time search width (higher = better recall)
+        "exact": False   # Use ANN, not exact search
+    },
+    with_payload=True,
+    score_threshold=0.7  # Minimum similarity
+)
+
+# Filter search with metadata
+filtered_results = client.search(
+    collection_name="docuverse",
+    query_vector=query_embedding,
+    query_filter={
+        "must": [
+            {"key": "category", "match": {"value": "python"}}
+        ],
+        "must_not": [
+            {"key": "deprecated", "match": {"value": True}}
+        ]
+    },
+    limit=5
+)</code></pre>
+                    </div>
+
+                    <div class="code-panel" id="code-pinecone-algo">
+                        <div class="code-header">
+                            <span class="code-filename">pinecone_serverless.py</span>
+                            <span class="code-description">Pinecone Serverless with hybrid search</span>
+                        </div>
+                        <pre><code class="language-python">from pinecone import Pinecone, ServerlessSpec
+import os
+
+# Initialize Pinecone client
+pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
+
+# Create serverless index
+pc.create_index(
+    name="docuverse-prod",
+    dimension=1536,
+    metric="cosine",
+    spec=ServerlessSpec(
+        cloud="aws",
+        region="us-east-1"
+    )
+)
+
+# Get index reference
+index = pc.Index("docuverse-prod")
+
+# Upsert vectors with metadata
+vectors = [
+    {
+        "id": f"doc_{i}",
+        "values": embedding,
+        "metadata": {
+            "url": doc.url,
+            "title": doc.title,
+            "source": doc.source,
+            "updated_at": doc.timestamp
+        }
+    }
+    for i, (embedding, doc) in enumerate(data)
+]
+
+# Batch upsert (max 100 vectors per batch)
+for i in range(0, len(vectors), 100):
+    batch = vectors[i:i+100]
+    index.upsert(vectors=batch, namespace="production")
+
+# Dense vector search
+results = index.query(
+    vector=query_embedding,
+    top_k=10,
+    include_metadata=True,
+    namespace="production"
+)
+
+# Hybrid search (dense + sparse)
+from pinecone_text.sparse import BM25Encoder
+
+# Initialize BM25 for sparse vectors
+bm25 = BM25Encoder()
+bm25.fit(corpus)  # Fit on your document corpus
+
+# Create sparse vector from query
+sparse_query = bm25.encode_queries(query_text)
+
+# Hybrid query with alpha weighting
+results = index.query(
+    vector=query_embedding,           # Dense vector
+    sparse_vector=sparse_query,       # Sparse (BM25) vector
+    top_k=50,
+    include_metadata=True,
+    filter={
+        "source": {"$in": ["official", "docs"]},
+        "updated_at": {"$gte": "2024-01-01"}
+    }
+)
+
+# Bulk import from S3 (for millions of vectors)
+index.start_import(
+    uri="s3://docuverse-bucket/embeddings/",
+    integration_id="s3-integration",
+    error_mode="continue"  # Skip failed records
+)</code></pre>
+                    </div>
+
+                    <div class="code-panel" id="code-faiss-algo">
+                        <div class="code-header">
+                            <span class="code-filename">faiss_ivf.py</span>
+                            <span class="code-description">FAISS IVF with Product Quantization</span>
+                        </div>
+                        <pre><code class="language-python">import faiss
+import numpy as np
+
+# Configuration
+dimension = 1536
+n_vectors = 5_000_000
+n_clusters = int(np.sqrt(n_vectors))  # ~2236 clusters
+
+# Training data (sample 10% for k-means)
+train_size = min(500_000, n_vectors // 10)
+train_vectors = vectors[:train_size].astype('float32')
+
+# Option 1: IVF with Flat (exact search within clusters)
+quantizer = faiss.IndexFlatL2(dimension)
+index_ivf = faiss.IndexIVFFlat(
+    quantizer, dimension, n_clusters, faiss.METRIC_L2
+)
+
+# Train the index (k-means clustering)
+index_ivf.train(train_vectors)
+print(f"Index trained: {index_ivf.is_trained}")
+
+# Add vectors
+index_ivf.add(all_vectors.astype('float32'))
+
+# Search parameters
+index_ivf.nprobe = 64  # Search 64 clusters (higher = better recall)
+
+# Option 2: IVF with Product Quantization (compressed)
+# PQ splits vector into subvectors and quantizes each
+m = 96           # Number of subquantizers
+bits = 8         # Bits per subquantizer code
+
+index_ivfpq = faiss.IndexIVFPQ(
+    quantizer, dimension, n_clusters, m, bits
+)
+
+index_ivfpq.train(train_vectors)
+index_ivfpq.add(all_vectors.astype('float32'))
+
+# Memory comparison
+print(f"IVF Flat memory: {index_ivf.ntotal * dimension * 4 / 1e9:.2f} GB")
+print(f"IVF PQ memory: {index_ivfpq.ntotal * m / 1e9:.2f} GB")
+
+# Search
+query = query_embedding.reshape(1, -1).astype('float32')
+distances, indices = index_ivf.search(query, k=10)
+
+# Option 3: HNSW in FAISS (for comparison)
+index_hnsw = faiss.IndexHNSWFlat(dimension, 32)  # M=32
+index_hnsw.hnsw.efConstruction = 200
+index_hnsw.hnsw.efSearch = 128
+
+index_hnsw.add(all_vectors.astype('float32'))
+distances, indices = index_hnsw.search(query, k=10)
+
+# GPU acceleration (if available)
+if faiss.get_num_gpus() > 0:
+    gpu_index = faiss.index_cpu_to_gpu(
+        faiss.StandardGpuResources(),
+        0,  # GPU device ID
+        index_ivf
+    )
+    distances, indices = gpu_index.search(query, k=10)</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benchmark Results -->
+            <div class="benchmark-section">
+                <h3 class="subsection-title">Benchmark Results (5M vectors, 1536 dims)</h3>
+                <div class="benchmark-grid">
+                    <div class="benchmark-card">
+                        <div class="benchmark-algo">IVF-Flat</div>
+                        <div class="benchmark-metrics">
+                            <div class="benchmark-metric">
+                                <span class="metric-label">Recall@10</span>
+                                <span class="metric-value">0.92</span>
+                            </div>
+                            <div class="benchmark-metric">
+                                <span class="metric-label">QPS</span>
+                                <span class="metric-value">850</span>
+                            </div>
+                            <div class="benchmark-metric">
+                                <span class="metric-label">Memory</span>
+                                <span class="metric-value">28 GB</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="benchmark-card">
+                        <div class="benchmark-algo">IVF-PQ</div>
+                        <div class="benchmark-metrics">
+                            <div class="benchmark-metric">
+                                <span class="metric-label">Recall@10</span>
+                                <span class="metric-value">0.85</span>
+                            </div>
+                            <div class="benchmark-metric">
+                                <span class="metric-label">QPS</span>
+                                <span class="metric-value">2,400</span>
+                            </div>
+                            <div class="benchmark-metric">
+                                <span class="metric-label">Memory</span>
+                                <span class="metric-value">4.5 GB</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="benchmark-card highlight">
+                        <div class="benchmark-algo">HNSW</div>
+                        <div class="benchmark-badge">Best Balance</div>
+                        <div class="benchmark-metrics">
+                            <div class="benchmark-metric">
+                                <span class="metric-label">Recall@10</span>
+                                <span class="metric-value">0.98</span>
+                            </div>
+                            <div class="benchmark-metric">
+                                <span class="metric-label">QPS</span>
+                                <span class="metric-value">1,200</span>
+                            </div>
+                            <div class="benchmark-metric">
+                                <span class="metric-label">Memory</span>
+                                <span class="metric-value">32 GB</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="benchmark-card">
+                        <div class="benchmark-algo">Pinecone Serverless</div>
+                        <div class="benchmark-metrics">
+                            <div class="benchmark-metric">
+                                <span class="metric-label">Recall@10</span>
+                                <span class="metric-value">0.96</span>
+                            </div>
+                            <div class="benchmark-metric">
+                                <span class="metric-label">QPS</span>
+                                <span class="metric-value">Elastic</span>
+                            </div>
+                            <div class="benchmark-metric">
+                                <span class="metric-label">Memory</span>
+                                <span class="metric-value">Managed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RAG Integration -->
+    <section class="section" id="rag">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">09</span>
+                <h2 class="section-title">RAG Pipeline Integration</h2>
+            </div>
+
+            <div class="rag-flow">
+                <h3 class="subsection-title">LangChain Orchestration Flow</h3>
+                <div class="rag-graph-container">
+                    <div class="rag-graph" id="ragGraph"></div>
+                    <div class="rag-legend">
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #3b82f6;"></span>
+                            <span>Query Processing</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #10b981;"></span>
+                            <span>Hybrid Retrieval</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #f59e0b;"></span>
+                            <span>Re-Ranking</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #8b5cf6;"></span>
+                            <span>Answer Synthesis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAG Steps Detail - Flip Cards -->
+            <p class="flip-hint">Click on a card to see more details</p>
+            <div class="rag-steps">
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front rag-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Query Embedding</h4>
+                                <p>Query sent to the <strong>same embedding function</strong> used for indexing.</p>
+                            </div>
+                            <span class="flip-indicator">Click for details</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4>Query Embedding - Details</h4>
+                            <ul>
+                                <li><strong>Model:</strong> e5-large (same as indexing)</li>
+                                <li><strong>Dimension:</strong> 1024-dimensional vector</li>
+                                <li><strong>Latency:</strong> ~15ms per query</li>
+                                <li><strong>Key insight:</strong> Using the same model for queries and documents ensures vectors are in the same latent space, making similarity comparisons meaningful.</li>
+                            </ul>
+                            <button class="flip-back-btn" onclick="event.stopPropagation(); this.closest('.flip-card').classList.remove('flipped')">Back</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front rag-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Hybrid Retrieval</h4>
+                                <p>LangChain queries Pinecone with vector + BM25 filters.</p>
+                            </div>
+                            <span class="flip-indicator">Click for details</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4>Hybrid Retrieval - Details</h4>
+                            <ul>
+                                <li><strong>Vector search:</strong> Cosine similarity on embeddings</li>
+                                <li><strong>Keyword (BM25):</strong> Exact matches for error codes, APIs</li>
+                                <li><strong>Alpha weighting:</strong> 0.7 vector + 0.3 sparse</li>
+                                <li><strong>Filters:</strong> <code>updated_at > 1 year ago</code></li>
+                                <li><strong>Initial candidates:</strong> Top 50 results from index</li>
+                            </ul>
+                            <button class="flip-back-btn" onclick="event.stopPropagation(); this.closest('.flip-card').classList.remove('flipped')">Back</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front rag-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Cross-Encoder Re-Ranking</h4>
+                                <p>Re-rank candidates with Cross-Encoder on Modal GPU.</p>
+                            </div>
+                            <span class="flip-indicator">Click for details</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4>Cross-Encoder - Details</h4>
+                            <ul>
+                                <li><strong>Model:</strong> ms-marco-MiniLM-L-12-v2</li>
+                                <li><strong>Input:</strong> (query, document) pairs</li>
+                                <li><strong>Output:</strong> Relevance score 0-1</li>
+                                <li><strong>Why:</strong> Bi-encoder (embedding) is fast but less precise. Cross-encoder sees query+doc together for better relevance.</li>
+                                <li><strong>GPU:</strong> Runs on Modal A10G for ~40ms latency</li>
+                            </ul>
+                            <button class="flip-back-btn" onclick="event.stopPropagation(); this.closest('.flip-card').classList.remove('flipped')">Back</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front rag-step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>Matrix Link Boost</h4>
+                                <p>Apply authority boost with PageRank-style scoring.</p>
+                            </div>
+                            <span class="flip-indicator">Click for details</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4>Matrix Link Boost - Details</h4>
+                            <ul>
+                                <li><strong>Formula:</strong> <code>Final = (Sim * 0.8) + (Authority * 0.2)</code></li>
+                                <li><strong>Authority source:</strong> Link graph analysis (PageRank)</li>
+                                <li><strong>Effect:</strong> Official docs outrank forum posts</li>
+                                <li><strong>Example:</strong> React.dev scores 0.95, random blog 0.3</li>
+                                <li><strong>Final output:</strong> Top 5 most relevant + authoritative docs</li>
+                            </ul>
+                            <button class="flip-back-btn" onclick="event.stopPropagation(); this.closest('.flip-card').classList.remove('flipped')">Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Operations & Resilience -->
+    <section class="section section-alt" id="operations">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">10</span>
+                <h2 class="section-title">Operational Resilience</h2>
+            </div>
+
+            <div class="ops-grid">
+                <div class="ops-card">
+                    <div class="ops-icon">&#9888;</div>
+                    <h3>Dead Letter Queue (DLQ)</h3>
+                    <p>In a system processing millions of items, 0.1% will fail. Failed items are serialized
+                    with error traceback and pushed to DLQ for later inspection or retry.</p>
+                    <pre><code class="language-python">try:
+    process(item)
+except Exception as e:
+    dlq.put({"input": item, "error": str(e)})</code></pre>
+                </div>
+
+                <div class="ops-card">
+                    <div class="ops-icon">&#128274;</div>
+                    <h3>Idempotency</h3>
+                    <p>Document IDs generated deterministically: <code>sha256(url)</code>.
+                    If a worker crashes after writing to Pinecone but before acknowledging,
+                    the retry simply overwrites with identical data.</p>
+                </div>
+
+                <div class="ops-card">
+                    <div class="ops-icon">&#128176;</div>
+                    <h3>Cost Monitoring</h3>
+                    <p>Track tokens processed by embedding function. If daily spend exceeds threshold ($50),
+                    the seed_injector is disabled until next billing cycle.</p>
+                    <div class="ops-circuit">
+                        <span class="circuit-label">Circuit Breaker</span>
+                        <span class="circuit-status">$42.50 / $50.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cost Comparison -->
+    <section class="section" id="costs">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">11</span>
+                <h2 class="section-title">Cost &amp; Performance Analysis</h2>
+            </div>
+
+            <div class="cost-comparison">
+                <h3 class="subsection-title">Monthly Cost: Kubernetes vs Serverless</h3>
+                <div class="cost-table-container">
+                    <table class="cost-table">
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>Kubernetes (EKS)</th>
+                                <th>DocuVerse (Modal)</th>
+                                <th>Savings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Compute (Crawler)</td>
+                                <td class="old-cost">$450/mo</td>
+                                <td class="new-cost">$42/mo</td>
+                                <td class="savings">90%</td>
+                            </tr>
+                            <tr>
+                                <td>Compute (GPU)</td>
+                                <td class="old-cost">$2,200/mo</td>
+                                <td class="new-cost">$150/mo</td>
+                                <td class="savings">93%</td>
+                            </tr>
+                            <tr>
+                                <td>Vector DB</td>
+                                <td class="old-cost">$300/mo</td>
+                                <td class="new-cost">$45/mo</td>
+                                <td class="savings">85%</td>
+                            </tr>
+                            <tr>
+                                <td>DevOps Labor</td>
+                                <td class="old-cost">10 hrs/mo</td>
+                                <td class="new-cost">1 hr/mo</td>
+                                <td class="savings">90%</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>Total</strong></td>
+                                <td class="old-cost"><strong>~$2,950</strong></td>
+                                <td class="new-cost"><strong>~$237</strong></td>
+                                <td class="savings"><strong>92%</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="performance-metrics">
+                <h3 class="subsection-title">Throughput Benchmarks</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">1,200</div>
+                        <div class="metric-label">pages/sec</div>
+                        <div class="metric-detail">Crawling Speed (300 containers)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">4,500</div>
+                        <div class="metric-label">docs/sec</div>
+                        <div class="metric-detail">Embedding Rate (50 A10G GPUs)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">10,000</div>
+                        <div class="metric-label">vectors/sec</div>
+                        <div class="metric-detail">Indexing via S3 bulk import</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">1.8s</div>
+                        <div class="metric-label">cold start</div>
+                        <div class="metric-detail">Container + model weights</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mind Map Section -->
+    <section class="section section-alt" id="mindmap">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">12</span>
+                <h2 class="section-title">Complete System Mind Map</h2>
+            </div>
+
+            <div class="mindmap-container">
+                <div class="mindmap-graph-container">
+                    <div class="mindmap-graph" id="mindmapGraph"></div>
+                    <div class="mindmap-legend">
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #6366f1;"></span>
+                            <span>Core Engine</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #3b82f6;"></span>
+                            <span>Ingestion</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #8b5cf6;"></span>
+                            <span>Processing</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #10b981;"></span>
+                            <span>Memory</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #f59e0b;"></span>
+                            <span>Interaction</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Section -->
+    <section class="section" id="code">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">13</span>
+                <h2 class="section-title">Reference Implementation</h2>
+            </div>
+
+            <div class="code-intro">
+                <p>Complete source code for the DocuVerse engine, structured as a Modal application package.</p>
+            </div>
+
+            <div class="code-tabs">
+                <button class="code-tab active" data-file="common">common.py</button>
+                <button class="code-tab" data-file="crawler">crawler.py</button>
+                <button class="code-tab" data-file="embedder">embedder.py</button>
+                <button class="code-tab" data-file="vectordb">vector_db.py</button>
+            </div>
+
+            <div class="code-panels">
+                <div class="code-panel active" id="code-common">
+                    <div class="code-header">
+                        <span class="code-filename">src/common.py</span>
+                        <span class="code-description">Shared data structures and configuration</span>
+                    </div>
+                    <pre><code class="language-python">from dataclasses import dataclass
+from typing import List, Optional
+
+# Constants
+QUEUE_NAME = "docuverse-frontier"
+DICT_NAME = "docuverse-visited"
+EMBED_QUEUE = "docuverse-embeddings"
+LINK_MATRIX_QUEUE = "docuverse-matrix"
+
+@dataclass
+class Document:
+    url: str
+    content: str
+    title: str
+    links: List[str]
+    doc_hash: str
+    metadata: dict
+
+@dataclass
+class VectorRecord:
+    id: str
+    values: List[float]
+    metadata: dict</code></pre>
+                </div>
+
+                <div class="code-panel" id="code-crawler">
+                    <div class="code-header">
+                        <span class="code-filename">src/crawler.py</span>
+                        <span class="code-description">Distributed Fetcher with Producer-Consumer pattern</span>
+                    </div>
+                    <pre><code class="language-python">import modal
+import hashlib
+from .common import Document, QUEUE_NAME, DICT_NAME, EMBED_QUEUE, LINK_MATRIX_QUEUE
+
+# Define the container image with necessary scraping libraries
+crawler_image = modal.Image.debian_slim().pip_install(
+    "beautifulsoup4", "requests"
+)
+
+app = modal.App("docuverse-crawler")
+
+# Persistent State
+frontier_queue = modal.Queue.from_name(QUEUE_NAME, create_if_missing=True)
+visited_db = modal.Dict.from_name(DICT_NAME, create_if_missing=True)
+embed_queue = modal.Queue.from_name(EMBED_QUEUE, create_if_missing=True)
+matrix_queue = modal.Queue.from_name(LINK_MATRIX_QUEUE, create_if_missing=True)
+
+@app.function(image=crawler_image, concurrency_limit=300)
+def fetch_url(url: str):
+    import requests
+    from bs4 import BeautifulSoup
+
+    # Idempotency check
+    if url in visited_db:
+        return
+
+    try:
+        response = requests.get(url, timeout=5)
+        if response.status_code != 200:
+            return
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # 1. Extract Content
+        text = soup.get_text()
+        title = soup.title.string if soup.title else url
+        doc_hash = hashlib.sha256(text.encode()).hexdigest()
+
+        # 2. Extract Matrix Links (Graph Edges)
+        links = [a.get('href') for a in soup.find_all('a', href=True)]
+        normalized_links = [l for l in links if l.startswith('http')]
+
+        doc = Document(
+            url=url,
+            content=text[:5000],  # Truncate for demo
+            title=title,
+            links=normalized_links,
+            doc_hash=doc_hash,
+            metadata={"source": "crawler"}
+        )
+
+        # 3. Mark as visited
+        visited_db[url] = {"hash": doc_hash, "status": "processed"}
+
+        # 4. Dispatch for Processing
+        embed_queue.put(doc)
+        matrix_queue.put({"source": url, "targets": normalized_links})
+
+        # 5. Expand Frontier
+        for link in normalized_links:
+            if link not in visited_db:
+                frontier_queue.put(link)
+
+    except Exception as e:
+        print(f"Failed to crawl {url}: {e}")
+
+@app.function(schedule=modal.Cron("0 2 * * *"))
+def seed_injector():
+    """Daily job to restart the crawl from root nodes."""
+    roots = ["https://docs.python.org/3/", "https://react.dev"]
+    for url in roots:
+        frontier_queue.put(url)</code></pre>
+                </div>
+
+                <div class="code-panel" id="code-embedder">
+                    <div class="code-header">
+                        <span class="code-filename">src/embedder.py</span>
+                        <span class="code-description">GPU Batch Processing with model caching</span>
+                    </div>
+                    <pre><code class="language-python">import modal
+from typing import List
+from .common import Document, VectorRecord, EMBED_QUEUE
+
+# Define a GPU-enabled image with PyTorch and Transformers
+gpu_image = (
+    modal.Image.debian_slim()
+    .pip_install("torch", "transformers", "sentence-transformers")
+)
+
+app = modal.App("docuverse-embedder")
+
+@app.cls(gpu="A10G", image=gpu_image, container_idle_timeout=300)
+class ModelService:
+    def __enter__(self):
+        from sentence_transformers import SentenceTransformer
+        # Load model once when container starts (Cold Start optimization)
+        self.model = SentenceTransformer('intfloat/multilingual-e5-large')
+
+    @modal.method()
+    def embed_batch(self, docs: List[Document]) -> List[VectorRecord]:
+        texts = [d.content for d in docs]
+
+        # Generate dense vectors
+        embeddings = self.model.encode(texts, normalize_embeddings=True)
+
+        records = []
+        for doc, emb in zip(docs, embeddings):
+            records.append(VectorRecord(
+                id=doc.doc_hash,
+                values=emb.tolist(),
+                metadata={"url": doc.url, "title": doc.title}
+            ))
+        return records
+
+@app.function(image=modal.Image.debian_slim())
+def batch_coordinator():
+    """Reads from queue, batches items, and sends to GPU."""
+    embed_queue = modal.Queue.from_name(EMBED_QUEUE)
+    service = ModelService()
+
+    BATCH_SIZE = 64
+
+    while True:
+        try:
+            items = embed_queue.get_many(BATCH_SIZE, block=True, timeout=5.0)
+            if not items:
+                break
+
+            # Invoke GPU function
+            vectors = service.embed_batch.remote(items)
+
+            # Send vectors to Pinecone
+            # pinecone_upload.remote(vectors)
+
+        except Exception:
+            break</code></pre>
+                </div>
+
+                <div class="code-panel" id="code-vectordb">
+                    <div class="code-header">
+                        <span class="code-filename">src/vector_db.py</span>
+                        <span class="code-description">Pinecone bulk upload via S3</span>
+                    </div>
+                    <pre><code class="language-python">import modal
+import os
+
+app = modal.App("docuverse-vectordb")
+
+@app.function(
+    secrets=[modal.Secret.from_name("pinecone-secret"),
+             modal.Secret.from_name("aws-secret")]
+)
+def bulk_upsert(parquet_file_path: str):
+    from pinecone import Pinecone
+    import boto3
+
+    # 1. Upload Parquet to S3
+    s3 = boto3.client('s3')
+    bucket = "docuverse-ingest-bucket"
+    key = f"imports/{os.path.basename(parquet_file_path)}"
+    s3.upload_file(parquet_file_path, bucket, key)
+
+    # 2. Trigger Pinecone Import
+    pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
+    idx = pc.Index("docuverse-prod")
+
+    # Start async import
+    idx.start_import(
+        uri=f"s3://{bucket}/{key}",
+        integration_id="s3-integration-id"
+    )
+    print("Bulk import started.")</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section class="section section-alt" id="resources">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-number">14</span>
+                <h2 class="section-title">Learning Resources</h2>
+            </div>
+
+            <!-- Video Resources -->
+            <div class="resources-section">
+                <h3 class="subsection-title">Video Tutorials</h3>
+                <div class="video-grid">
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe
+                                src="https://www.youtube.com/embed/JEBDfGqrAUA"
+                                title="Modal Labs Introduction"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>Getting Started with Modal</h4>
+                            <p>Official introduction to serverless GPU compute with Modal Labs</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe
+                                src="https://www.youtube.com/embed/T-D1OfcDW1M"
+                                title="RAG Tutorial"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>Building RAG Applications</h4>
+                            <p>Complete guide to Retrieval-Augmented Generation with LangChain</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe
+                                src="https://www.youtube.com/embed/sVcwVQRHIc8"
+                                title="HNSW Algorithm"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>HNSW Algorithm Deep Dive</h4>
+                            <p>Understanding Hierarchical Navigable Small World graphs</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe
+                                src="https://www.youtube.com/embed/8KrTO9bS91s"
+                                title="Complete Vector Database Tutorial"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>Complete Vector Database Tutorial</h4>
+                            <p>Learn ChromaDB, Pinecone &amp; Weaviate for Generative AI</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe
+                                src="https://www.youtube.com/embed/QvKMwLjdK-s"
+                                title="HNSW for Vector Search"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>HNSW Explained &amp; Implemented</h4>
+                            <p>Hierarchical Navigable Small World with Faiss (Python)</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe
+                                src="https://www.youtube.com/embed/xMCyq4pJcrQ"
+                                title="Vector Indexing Explained"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>Vector Indexing: HNSW, IVF &amp; PQ</h4>
+                            <p>Complete guide to vector indexing methods and when to use each</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe
+                                src="https://www.youtube.com/embed/MykcjWPJ6T4"
+                                title="Build RAG Pipeline From Scratch"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>RAG Pipeline From Scratch</h4>
+                            <p>Data Ingestion to Vector Store with LangChain</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe
+                                src="https://www.youtube.com/embed/s5MMPp_WQok"
+                                title="RAG Chatbot with Qdrant"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>RAG Chatbot with Claude &amp; Qdrant</h4>
+                            <p>Building document processing chatbots with vector databases</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe
+                                src="https://www.youtube.com/embed/aX_hdQEintc"
+                                title="How to Choose a Vector Database"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>How to Choose a Vector Database</h4>
+                            <p>PGVector vs Pinecone vs Redis comparison</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation Links -->
+            <div class="resources-section">
+                <h3 class="subsection-title">Official Documentation</h3>
+                <div class="docs-grid">
+                    <a href="https://modal.com/docs" target="_blank" rel="noopener" class="doc-card">
+                        <div class="doc-icon">&#128214;</div>
+                        <div class="doc-info">
+                            <h4>Modal Documentation</h4>
+                            <p>Complete guide to serverless GPU compute</p>
+                        </div>
+                        <span class="doc-arrow">&#8594;</span>
+                    </a>
+
+                    <a href="https://docs.pinecone.io" target="_blank" rel="noopener" class="doc-card">
+                        <div class="doc-icon">&#128205;</div>
+                        <div class="doc-info">
+                            <h4>Pinecone Documentation</h4>
+                            <p>Vector database setup and best practices</p>
+                        </div>
+                        <span class="doc-arrow">&#8594;</span>
+                    </a>
+
+                    <a href="https://qdrant.tech/documentation" target="_blank" rel="noopener" class="doc-card">
+                        <div class="doc-icon">&#9672;</div>
+                        <div class="doc-info">
+                            <h4>Qdrant Documentation</h4>
+                            <p>Open-source vector search engine</p>
+                        </div>
+                        <span class="doc-arrow">&#8594;</span>
+                    </a>
+
+                    <a href="https://python.langchain.com/docs" target="_blank" rel="noopener" class="doc-card">
+                        <div class="doc-icon">&#9741;</div>
+                        <div class="doc-info">
+                            <h4>LangChain Documentation</h4>
+                            <p>Building LLM applications and RAG pipelines</p>
+                        </div>
+                        <span class="doc-arrow">&#8594;</span>
+                    </a>
+
+                    <a href="https://huggingface.co/intfloat/multilingual-e5-large" target="_blank" rel="noopener" class="doc-card">
+                        <div class="doc-icon">&#129302;</div>
+                        <div class="doc-info">
+                            <h4>E5 Embedding Model</h4>
+                            <p>Multilingual text embedding model</p>
+                        </div>
+                        <span class="doc-arrow">&#8594;</span>
+                    </a>
+
+                    <a href="https://www.sbert.net" target="_blank" rel="noopener" class="doc-card">
+                        <div class="doc-icon">&#128209;</div>
+                        <div class="doc-info">
+                            <h4>Sentence Transformers</h4>
+                            <p>Python framework for embeddings</p>
+                        </div>
+                        <span class="doc-arrow">&#8594;</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Research Papers -->
+            <div class="resources-section">
+                <h3 class="subsection-title">Research &amp; Further Reading</h3>
+                <div class="papers-list">
+                    <div class="paper-item">
+                        <span class="paper-type">Paper</span>
+                        <div class="paper-content">
+                            <a href="https://arxiv.org/abs/1603.09320" target="_blank" rel="noopener">
+                                <h4>Efficient and robust approximate nearest neighbor search using HNSW</h4>
+                            </a>
+                            <p>Malkov &amp; Yashunin - The foundational paper on HNSW algorithm</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Paper</span>
+                        <div class="paper-content">
+                            <a href="https://arxiv.org/abs/1807.05614" target="_blank" rel="noopener">
+                                <h4>ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms</h4>
+                            </a>
+                            <p>Comprehensive benchmarking framework for vector search algorithms</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Paper</span>
+                        <div class="paper-content">
+                            <a href="https://arxiv.org/html/2412.01940v3" target="_blank" rel="noopener">
+                                <h4>Down with the Hierarchy: The 'H' in HNSW Stands for "Hubs"</h4>
+                            </a>
+                            <p>Recent analysis on HNSW graph structure and hub nodes</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Paper</span>
+                        <div class="paper-content">
+                            <h4>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</h4>
+                            <p>Lewis et al. - The original RAG paper from Facebook AI</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Paper</span>
+                        <div class="paper-content">
+                            <a href="https://aimsciences.org/article/doi/10.3934/nhm.2006.1.669" target="_blank" rel="noopener">
+                                <h4>The Many Facets of Internet Topology and Traffic</h4>
+                            </a>
+                            <p>H. Chang &amp; S. Uhlig - American Institute of Mathematical Sciences</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal & Infrastructure References -->
+            <div class="resources-section">
+                <h3 class="subsection-title">Modal &amp; Infrastructure</h3>
+                <div class="papers-list">
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://modal.com/blog/fast-lazy-container-loading" target="_blank" rel="noopener">
+                                <h4>Fast, lazy container loading in Modal.com</h4>
+                            </a>
+                            <p>Modal Blog - Container optimization techniques</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://modal.com/docs/guide/dicts-and-queues" target="_blank" rel="noopener">
+                                <h4>Use Modal Dicts and Queues together</h4>
+                            </a>
+                            <p>Modal Docs - Distributed data structures</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://modal.com/docs/guide/scale" target="_blank" rel="noopener">
+                                <h4>Scaling out</h4>
+                            </a>
+                            <p>Modal Docs - Horizontal scaling strategies</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://modal.com/docs/guide/project-structure" target="_blank" rel="noopener">
+                                <h4>Project structure</h4>
+                            </a>
+                            <p>Modal Docs - Organizing Modal applications</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vector Database References -->
+            <div class="resources-section">
+                <h3 class="subsection-title">Vector Databases</h3>
+                <div class="papers-list">
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://www.databricks.com/glossary/vector-database" target="_blank" rel="noopener">
+                                <h4>What Are Vector Databases? Definition And Uses</h4>
+                            </a>
+                            <p>Databricks - Vector database fundamentals</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://www.ibm.com/think/topics/vector-database" target="_blank" rel="noopener">
+                                <h4>What Is A Vector Database?</h4>
+                            </a>
+                            <p>IBM - Comprehensive overview of vector databases</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://www.elastic.co/what-is/vector-database" target="_blank" rel="noopener">
+                                <h4>What is a Vector Database?</h4>
+                            </a>
+                            <p>Elastic - Vector database concepts and applications</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://docs.pinecone.io/reference/architecture/serverless-architecture" target="_blank" rel="noopener">
+                                <h4>Pinecone Architecture</h4>
+                            </a>
+                            <p>Pinecone Docs - Serverless vector database architecture</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://docs.pinecone.io/guides/get-started/quickstart" target="_blank" rel="noopener">
+                                <h4>Pinecone Quickstart</h4>
+                            </a>
+                            <p>Pinecone Docs - Getting started guide</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://docs.pinecone.io/guides/data/indexing-overview" target="_blank" rel="noopener">
+                                <h4>Indexing overview</h4>
+                            </a>
+                            <p>Pinecone Docs - Vector indexing strategies</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://www.pinecone.io/blog/reimagining-vector-database" target="_blank" rel="noopener">
+                                <h4>Reimagining the vector database to enable knowledgeable AI</h4>
+                            </a>
+                            <p>Pinecone Blog - Future of vector databases</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://qdrant.tech/documentation/overview/" target="_blank" rel="noopener">
+                                <h4>What is Qdrant?</h4>
+                            </a>
+                            <p>Qdrant - Open-source vector search engine overview</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://qdrant.tech/blog/comparing-qdrant-vs-pinecone-vector-databases/" target="_blank" rel="noopener">
+                                <h4>Qdrant vs Pinecone: Vector Databases for AI Apps</h4>
+                            </a>
+                            <p>Qdrant Blog - Database comparison</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://qdrant.tech/documentation/guides/distributed_deployment/" target="_blank" rel="noopener">
+                                <h4>Distributed Deployment</h4>
+                            </a>
+                            <p>Qdrant Docs - Scaling Qdrant clusters</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://qdrant.tech/blog/hybrid-cloud/" target="_blank" rel="noopener">
+                                <h4>Qdrant Hybrid Cloud</h4>
+                            </a>
+                            <p>Qdrant Blog - Managed vector database deployment options</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Embeddings & ANN References -->
+            <div class="resources-section">
+                <h3 class="subsection-title">Embeddings &amp; ANN Algorithms</h3>
+                <div class="papers-list">
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://www.ibm.com/think/topics/vector-embedding" target="_blank" rel="noopener">
+                                <h4>What is Vector Embedding?</h4>
+                            </a>
+                            <p>IBM - Understanding vector embeddings</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://www.elastic.co/what-is/vector-embedding" target="_blank" rel="noopener">
+                                <h4>What are Vector Embeddings?</h4>
+                            </a>
+                            <p>Elastic - Comprehensive vector embeddings guide</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Guide</span>
+                        <div class="paper-content">
+                            <a href="https://www.tigerdata.com/blog/a-beginners-guide-to-vector-embeddings" target="_blank" rel="noopener">
+                                <h4>A Beginner's Guide to Vector Embeddings</h4>
+                            </a>
+                            <p>TigerData - Introduction to embeddings</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://nlp.stanford.edu/projects/glove/" target="_blank" rel="noopener">
+                                <h4>GloVe: Global Vectors for Word Representation</h4>
+                            </a>
+                            <p>Stanford NLP - Pre-trained word vectors</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://en.wikipedia.org/wiki/Curse_of_dimensionality" target="_blank" rel="noopener">
+                                <h4>Curse of dimensionality</h4>
+                            </a>
+                            <p>Wikipedia - High-dimensional space challenges</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://medium.com/thedeephub/understading-hnsw-hierarchical-navigable-small-world-ff1a72d98605" target="_blank" rel="noopener">
+                                <h4>Understanding HNSW — Hierarchical Navigable Small World</h4>
+                            </a>
+                            <p>Medium - Deep dive into HNSW algorithm</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://zilliz.com/learn/hierarchical-navigable-small-worlds-HNSW" target="_blank" rel="noopener">
+                                <h4>Understanding Hierarchical Navigable Small Worlds (HNSW)</h4>
+                            </a>
+                            <p>Zilliz Learn - HNSW explained</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://www.pinecone.io/learn/series/faiss/hnsw/" target="_blank" rel="noopener">
+                                <h4>Hierarchical Navigable Small Worlds (HNSW)</h4>
+                            </a>
+                            <p>Pinecone Learn - HNSW with FAISS</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Guide</span>
+                        <div class="paper-content">
+                            <a href="https://www.pingcap.com/article/approximate-nearest-neighbor-ann-search-explained-ivf-vs-hnsw-vs-pq/" target="_blank" rel="noopener">
+                                <h4>ANN Search Explained: IVF vs HNSW vs PQ</h4>
+                            </a>
+                            <p>TiDB - Comparison of ANN algorithms</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://myscale.com/blog/hnsw-vs-ivf-explained-powerful-comparison/" target="_blank" rel="noopener">
+                                <h4>Powerful Comparison: HNSW vs IVF Indexing Methods</h4>
+                            </a>
+                            <p>MyScale - Index performance comparison</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benchmarks & Performance -->
+            <div class="resources-section">
+                <h3 class="subsection-title">Benchmarks &amp; Performance</h3>
+                <div class="papers-list">
+                    <div class="paper-item">
+                        <span class="paper-type">Tool</span>
+                        <div class="paper-content">
+                            <a href="https://ann-benchmarks.com/" target="_blank" rel="noopener">
+                                <h4>ANN-Benchmarks</h4>
+                            </a>
+                            <p>Benchmarking tool for approximate nearest neighbor algorithms</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">GitHub</span>
+                        <div class="paper-content">
+                            <a href="https://github.com/erikbern/ann-benchmarks" target="_blank" rel="noopener">
+                                <h4>erikbern/ann-benchmarks</h4>
+                            </a>
+                            <p>Benchmarks of approximate nearest neighbor libraries in Python</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://ann-benchmarks.com/glove-100-angular_10_angular.html" target="_blank" rel="noopener">
+                                <h4>glove-100-angular (k = 10)</h4>
+                            </a>
+                            <p>ANN-Benchmarks - GloVe dataset benchmark results</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://github.com/facebookresearch/faiss/wiki/Indexing-1M-vectors" target="_blank" rel="noopener">
+                                <h4>Indexing 1M vectors</h4>
+                            </a>
+                            <p>FAISS Wiki - Large-scale vector indexing</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://cloud.google.com/blog/products/databases/how-scann-for-alloydb-vector-search-compares-to-pgvector-hnsw" target="_blank" rel="noopener">
+                                <h4>ScaNN for AlloyDB vs pgvector HNSW</h4>
+                            </a>
+                            <p>Google Cloud - Performance comparison</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://zilliz.com/blog/hnswlib-vs-scann-choosing-the-right-tool-for-vector-search" target="_blank" rel="noopener">
+                                <h4>HNSWlib vs ScaNN on Vector Search</h4>
+                            </a>
+                            <p>Zilliz Blog - Algorithm comparison</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LangChain & RAG -->
+            <div class="resources-section">
+                <h3 class="subsection-title">LangChain &amp; RAG Integration</h3>
+                <div class="papers-list">
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://docs.langchain.com/docs/integrations/vectorstores/qdrant" target="_blank" rel="noopener">
+                                <h4>Qdrant - LangChain Integration</h4>
+                            </a>
+                            <p>LangChain Docs - Qdrant vector store</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://python.langchain.com/docs/integrations/vectorstores/qdrant/" target="_blank" rel="noopener">
+                                <h4>Qdrant - LangChain Python</h4>
+                            </a>
+                            <p>LangChain Python - Qdrant integration guide</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Guide</span>
+                        <div class="paper-content">
+                            <a href="https://qdrant.tech/documentation/beginner-tutorials/search-beginners/" target="_blank" rel="noopener">
+                                <h4>Build Your First Semantic Search Engine in 5 Minutes</h4>
+                            </a>
+                            <p>Qdrant Tutorial - Getting started with semantic search</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Guide</span>
+                        <div class="paper-content">
+                            <a href="https://www.packtpub.com/en-us/learning/how-to-tutorials/hands-on-tutial-on-how-to-use-pinecone-with-langchain" target="_blank" rel="noopener">
+                                <h4>How to use Pinecone with LangChain</h4>
+                            </a>
+                            <p>Packt - Hands-on tutorial</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://medium.com/data-science-collective/visual-answer-grounding-with-multi-modal-rag-workflow" target="_blank" rel="noopener">
+                                <h4>Visual Answer Grounding with Multi-Modal RAG Workflow</h4>
+                            </a>
+                            <p>Medium - Advanced RAG techniques</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cloud & Enterprise -->
+            <div class="resources-section">
+                <h3 class="subsection-title">Cloud &amp; Enterprise Solutions</h3>
+                <div class="papers-list">
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://docs.databricks.com/en/generative-ai/vector-search.html" target="_blank" rel="noopener">
+                                <h4>Mosaic AI Vector Search</h4>
+                            </a>
+                            <p>Databricks on AWS - Enterprise vector search</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://aws.amazon.com/blogs/aws/amazon-opensearch-service-vector-database-gpu-acceleration/" target="_blank" rel="noopener">
+                                <h4>Amazon OpenSearch Service with GPU acceleration</h4>
+                            </a>
+                            <p>AWS News Blog - Vector database performance improvements</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://skysql.com/products/vector-database/" target="_blank" rel="noopener">
+                                <h4>Free Serverless Vector Database</h4>
+                            </a>
+                            <p>SkySQL - Instant, scalable &amp; fast vector storage</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://thenewstack.io/pinecone-revamps-vector-database-architecture-for-ai-apps/" target="_blank" rel="noopener">
+                                <h4>Pinecone Revamps Vector Database Architecture for AI Apps</h4>
+                            </a>
+                            <p>The New Stack - Architecture evolution</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://www.trantorinc.com/blog/pinecone-ai-guide" target="_blank" rel="noopener">
+                                <h4>Pinecone AI: The Future of Search</h4>
+                            </a>
+                            <p>Trantor - Comprehensive Pinecone guide</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Blog</span>
+                        <div class="paper-content">
+                            <a href="https://thatware.co/graph-neural-networks-for-seo/" target="_blank" rel="noopener">
+                                <h4>Graph Neural Networks for SEO: Enhancing Link Structure</h4>
+                            </a>
+                            <p>ThatWare - Next Gen with Hyper-Intelligence</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Use Cases & Applications -->
+            <div class="resources-section">
+                <h3 class="subsection-title">Use Cases &amp; Applications</h3>
+                <div class="papers-list">
+                    <div class="paper-item">
+                        <span class="paper-type">Guide</span>
+                        <div class="paper-content">
+                            <a href="https://www.instaclustr.com/education/vector-database/vector-database-13-use-cases-from-traditional-to-next-gen/" target="_blank" rel="noopener">
+                                <h4>Vector Database: 13 Use Cases</h4>
+                            </a>
+                            <p>NetApp Instaclustr - From traditional to next-gen applications</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Guide</span>
+                        <div class="paper-content">
+                            <a href="https://research.aimultiple.com/vector-database-use-cases/" target="_blank" rel="noopener">
+                                <h4>Top 10 Vector Database Use Cases</h4>
+                            </a>
+                            <p>AIMultiple Research - Industry applications</p>
+                        </div>
+                    </div>
+                    <div class="paper-item">
+                        <span class="paper-type">Docs</span>
+                        <div class="paper-content">
+                            <a href="https://learn.microsoft.com/en-us/data-engineering/playbook/solutions/vector-database/" target="_blank" rel="noopener">
+                                <h4>Vector databases in data engineering</h4>
+                            </a>
+                            <p>Microsoft Learn - Enterprise data solutions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">&#9673;</span>
+                    <span class="logo-text">DocuVerse</span>
+                    <p>Serverless Semantic Search Engine Architecture</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Architecture</h4>
+                        <ul>
+                            <li><a href="#crawler">Distributed Crawler</a></li>
+                            <li><a href="#embeddings">GPU Embeddings</a></li>
+                            <li><a href="#vectordb">Vector Database</a></li>
+                            <li><a href="#rag">RAG Pipeline</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Technologies</h4>
+                        <ul>
+                            <li><a href="https://modal.com" target="_blank">Modal</a></li>
+                            <li><a href="https://pinecone.io" target="_blank">Pinecone</a></li>
+                            <li><a href="https://qdrant.tech" target="_blank">Qdrant</a></li>
+                            <li><a href="https://langchain.com" target="_blank">LangChain</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#code">Source Code</a></li>
+                            <li><a href="#resources">Documentation</a></li>
+                            <li><a href="#costs">Cost Analysis</a></li>
+                            <li><a href="#mindmap">System Map</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Built with serverless architecture principles</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top" aria-label="Back to top">
+        <span>&#8593;</span>
+    </button>
+
+    <!-- JavaScript -->
+    <script src="scripts.js"></script>
+</body>
+</html>
